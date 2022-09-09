@@ -1,5 +1,15 @@
 Simple ULID implementation for deno.
 
+## Usage
+
+```
+import { Generator } from "https://deno.land/x/ulideno@v0.1.0/mod.ts";
+
+const gen = new Generator();
+const ulid = gen.ulid_encoded();
+console.log(ulid);
+```
+
 ## Example
 
 See `ulid_test.ts`.
