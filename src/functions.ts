@@ -22,7 +22,7 @@ export const random_binary = (): Binary => {
 
 export const encode_base32 = (bin: Binary): Encoded => {
   if (bin?.length !== 128) {
-    return undefined;
+    throw new Error("Invalid binary length: Should be 128.");
   }
   const filled_bin = "00" + bin;
   const buffer: string[] = new Array(26);

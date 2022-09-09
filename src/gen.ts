@@ -38,7 +38,9 @@ export class Generator {
       const new_time = time_binary();
       if (this.prev_time === new_time) {
         if (this.prev_rand === "1".repeat(RAND_LEN)) {
-          return undefined;
+          throw new Error(
+            "Random part reached max value: Cannot generate monotonic ulid."
+          );
         } else {
           this.prev_rand = inc_binary(this.prev_rand);
           return this.join();
@@ -60,7 +62,9 @@ export class Generator {
       const new_time = time_binary();
       if (this.prev_time === new_time) {
         if (this.prev_rand === "1".repeat(RAND_LEN)) {
-          return undefined;
+          throw new Error(
+            "Random part reached max value: Cannot generate monotonic ulid."
+          );
         } else {
           this.prev_rand = inc_binary(this.prev_rand);
           return encode_base32(this.join());
