@@ -14,8 +14,6 @@ Deno.test("generator test", () => {
 
 Deno.test("generator(binary) test", () => {
   const gen = new Generator();
-  const ulid = gen.ulid();
-  assertEquals(ulid?.length, 128);
   console.log(gen.ulid());
 });
 
@@ -45,4 +43,11 @@ Deno.test("encoding error test", () => {
   const wrong_binary =
     "0000001100000110010010000100111111110010000111000000101001111111001101000010011101101110111000010111010101010010011110110101110";
   assertThrows(() => encode_base32(wrong_binary));
+});
+
+Deno.test("BigInt test", () => {
+  assertEquals(
+    ((BigInt(1) << BigInt(80)) - BigInt(1)).toString(2),
+    "11111111111111111111111111111111111111111111111111111111111111111111111111111111"
+  );
 });

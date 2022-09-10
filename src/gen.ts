@@ -1,18 +1,13 @@
-import {
-  time_binary,
-  random_binary,
-  inc_binary,
-  encode_base32,
-} from "./functions.ts";
+import { time_binary, random_binary, encode_base32 } from "./functions.ts";
 
-const RAND_LEN = 80;
+const RAND_MAX = (BigInt(1) << BigInt(80)) - BigInt(1);
 
 export type Binary = string | undefined;
 export type Encoded = string | undefined;
 
 export class Generator {
-  prev_time: Binary;
-  prev_rand: Binary;
+  prev_time: bigint | undefined;
+  prev_rand: bigint | undefined;
 
   constructor() {
     {
@@ -25,7 +20,8 @@ export class Generator {
     if (this.prev_time === undefined || this.prev_rand === undefined) {
       return undefined;
     } else {
-      return this.prev_time + this.prev_rand;
+      const result = this.prev_time! | this.prev_rand!;
+      return result.toString(2).padStart(128, "0");
     }
   }
 
@@ -37,12 +33,12 @@ export class Generator {
     } else {
       const new_time = time_binary();
       if (this.prev_time === new_time) {
-        if (this.prev_rand === "1".repeat(RAND_LEN)) {
+        if (this.prev_rand === RAND_MAX) {
           throw new Error(
             "Random part reached max value: Cannot generate monotonic ulid."
           );
         } else {
-          this.prev_rand = inc_binary(this.prev_rand);
+          this.prev_rand = this.prev_rand! + BigInt(1);
           return this.join();
         }
       } else {
@@ -53,7 +49,7 @@ export class Generator {
     }
   }
 
-  ulid_encoded(): Binary {
+  ulid_encoded(): Encoded {
     if (this.prev_time === undefined) {
       this.prev_time = time_binary();
       this.prev_rand = random_binary();
@@ -61,12 +57,12 @@ export class Generator {
     } else {
       const new_time = time_binary();
       if (this.prev_time === new_time) {
-        if (this.prev_rand === "1".repeat(RAND_LEN)) {
+        if (this.prev_rand === RAND_MAX) {
           throw new Error(
             "Random part reached max value: Cannot generate monotonic ulid."
           );
         } else {
-          this.prev_rand = inc_binary(this.prev_rand);
+          this.prev_rand = this.prev_rand! + BigInt(1);
           return encode_base32(this.join());
         }
       } else {

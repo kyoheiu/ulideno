@@ -2,30 +2,30 @@ import { Binary, Encoded } from "./gen.ts";
 
 const BASE32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
 const ULID_LEN = 26;
-const TIME_LEN = 48;
+const BINARY_LEN = 128;
 
-export const time_binary = (): Binary => {
+export const time_binary = (): bigint => {
   const time = Date.now();
-  const result = time.toString(2).padStart(TIME_LEN, "0");
+  const result = BigInt(time) << BigInt(80);
   return result;
 };
 
-export const random_binary = (): Binary => {
-  const arr1 = new BigUint64Array(1);
-  self.crypto.getRandomValues(arr1);
-  const crypto64 = arr1[0].toString(2).padStart(64, "0");
-  const arr2 = new Uint16Array(1);
-  self.crypto.getRandomValues(arr2);
-  const crypto16 = arr2[0].toString(2).padStart(16, "0");
-  return crypto64 + crypto16;
+export const random_binary = (): bigint => {
+  const arr = new Uint16Array(5);
+  self.crypto.getRandomValues(arr);
+  let result = BigInt(0);
+  for (let i = 0; i < 5; i++) {
+    result = result | BigInt(BigInt(arr[i]) << BigInt(i * 16));
+  }
+  return result;
 };
 
 export const encode_base32 = (bin: Binary): Encoded => {
-  if (bin?.length !== 128) {
+  if (bin?.length !== BINARY_LEN) {
     throw new Error("Invalid binary length: Should be 128.");
   }
   const filled_bin = "00" + bin;
-  const buffer: string[] = new Array(26);
+  const buffer: string[] = new Array(ULID_LEN);
   for (let i = 0; i < ULID_LEN; i++) {
     let slice: string;
     if (i == 0) {
@@ -38,16 +38,4 @@ export const encode_base32 = (bin: Binary): Encoded => {
     buffer[i] = x;
   }
   return buffer.reverse().join("");
-};
-
-export const inc_binary = (bin: Binary): Binary => {
-  const bin_reverse = bin!.split("").reverse();
-  const zero_index = bin_reverse.indexOf("0");
-  if (zero_index !== -1) {
-    bin_reverse[zero_index] = "1";
-    for (let i = 0; i < zero_index; i++) {
-      bin_reverse[i] = "0";
-    }
-    return bin_reverse.reverse().join("");
-  }
 };

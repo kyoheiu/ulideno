@@ -2,19 +2,25 @@ Simple ULID implementation for deno.
 
 ## Usage
 
-```
-import { Generator } from "https://deno.land/x/ulideno@v0.1.0/mod.ts";
+```ts
+import {
+  Generator,
+  encode_base32,
+} from "https://deno.land/x/ulideno@v0.1.0/mod.ts";
 
 const gen = new Generator();
-const ulid = gen.ulid_encoded();
-console.log(ulid);
+const ulid = gen.ulid();
+const ulid_encoded = encode_base32(ulid);
+const another_ulid_encoded = gen.ulid_encoded();
+const yet_another = gen.ulid_encoded();
+console.log(ulid, ulid_encoded, another_ulid_encoded, yet_another);
 ```
 
-## Example
+## Description
 
 See `ulid_test.ts`.
 
-```
+```ts
 import { Generator, encode_base32 } from "./mod.ts";
 
 //example output: 01GCJ4PN0TW96EHC5GMEPMYHTV
@@ -28,8 +34,6 @@ Deno.test("generator test", () => {
 //example output: 00000001100000110010010001001011010101000001111101010111000101110001011111001111000000110000001101011010001100100101000011101110
 Deno.test("generator(binary) test", () => {
   const gen = new Generator();
-  const ulid = gen.ulid();
-  assertEquals(ulid?.length, 128);
   console.log(gen.ulid());
 });
 
