@@ -6,7 +6,7 @@ Simple ULID implementation for deno.
 import {
   Generator,
   encode_base32,
-} from "https://deno.land/x/ulideno@v0.1.0/mod.ts";
+} from "https://deno.land/x/ulideno@v0.2.0/mod.ts";
 
 const gen = new Generator();
 const ulid = gen.ulid();
