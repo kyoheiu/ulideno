@@ -1,4 +1,4 @@
-Simple ULID implementation for deno.
+Simple [ULID](https://github.com/ulid/spec) implementation for deno.
 
 ## Usage
 
