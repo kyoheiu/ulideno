@@ -53,23 +53,19 @@ export class Generator {
     if (this.prev_time === undefined) {
       this.prev_time = time_binary();
       this.prev_rand = random_binary();
-      return encode_base32(this.join());
     } else {
       const new_time = time_binary();
       if (this.prev_time === new_time) {
         if (this.prev_rand === RAND_MAX) {
-          throw new Error(
-            "Random part reached max value: Cannot generate monotonic ulid."
-          );
+          this.prev_rand = BigInt(0);
         } else {
           this.prev_rand = this.prev_rand! + BigInt(1);
-          return encode_base32(this.join());
         }
       } else {
         this.prev_time = new_time;
         this.prev_rand = random_binary();
-        return encode_base32(this.join());
       }
     }
+    return encode_base32(this.join());
   }
 }
