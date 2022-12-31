@@ -64,4 +64,17 @@ Deno.test("encoding test", () => {
     "00000001100000110010010000100111111110010000111000000101001111111001101000010011101101110111000010111010101010010011110110101110";
   assertEquals(encode_base32(binary), "01GCJ2FY8E0MZSM4XQE2XAJFDE");
 });
+
+Deno.test("wrap test", () => {
+  let gen = new Generator();
+  gen.prev_time = time_binary();
+  //When the random component is going to overflow...
+  gen.prev_rand = (BigInt(1) << BigInt(80)) - BigInt(2);
+  //It is wrapped around to 0.
+  //i.e.
+  //01GNMY86NAZZZZZZZZZZZZZZZZ
+  //01GNMY86NA0000000000000000
+  console.log(gen.ulid_encoded());
+  console.log(gen.ulid_encoded());
+});
 ```
