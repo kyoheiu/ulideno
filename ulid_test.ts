@@ -4,6 +4,7 @@ import {
   assertThrows,
 } from "https://deno.land/std@0.155.0/testing/asserts.ts";
 import { Generator, encode_base32 } from "./mod.ts";
+import { time_binary } from "./src/functions.ts";
 
 Deno.test("generator test", () => {
   const gen = new Generator();
@@ -50,4 +51,12 @@ Deno.test("BigInt test", () => {
     ((BigInt(1) << BigInt(80)) - BigInt(1)).toString(2),
     "11111111111111111111111111111111111111111111111111111111111111111111111111111111"
   );
+});
+
+Deno.test("wrap test", () => {
+  let gen = new Generator();
+  gen.prev_time = time_binary();
+  gen.prev_rand = (BigInt(1) << BigInt(80)) - BigInt(2);
+  console.log(gen.ulid_encoded());
+  console.log(gen.ulid_encoded());
 });
